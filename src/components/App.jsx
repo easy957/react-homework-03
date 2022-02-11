@@ -1,17 +1,24 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        textTransform: 'uppercase',
-        color: '#010101',
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import { Component } from 'react';
+import ImageGallery from './ImageGallery';
+import Searchbar from './Searchbar';
+
+export class App extends Component {
+  state = {
+    queryName: '',
+  };
+
+  handleSearch = query => {
+    this.setState({ queryName: query });
+  };
+
+  render() {
+    const { queryName, showModal } = this.state;
+
+    return (
+      <>
+        <Searchbar onSearchSubmit={this.handleSearch} />
+        <ImageGallery queryName={queryName} />
+      </>
+    );
+  }
+}

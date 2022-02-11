@@ -12,7 +12,7 @@ export class App extends Component {
   };
 
   render() {
-    const { queryName, showModal } = this.state;
+    const { queryName } = this.state;
 
     return (
       <>

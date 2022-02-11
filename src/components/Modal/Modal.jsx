@@ -14,7 +14,6 @@ export default class Modal extends Component {
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
-    document.body.style.overflow = 'hidden';
   }
 
   componentWillUnmount() {

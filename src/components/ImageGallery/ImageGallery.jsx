@@ -10,7 +10,7 @@ import s from './ImageGallery.module.css';
 export default class ImageGallery extends Component {
   state = {
     galleryItems: [],
-    currentPage: 1,
+    currentPage: 0,
     status: 'idle',
     error: null,
     showModal: false,
@@ -19,18 +19,18 @@ export default class ImageGallery extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { queryName } = this.props;
+    const { currentPage } = this.state;
 
     if (prevProps.queryName !== queryName) {
-      this.setState({ galleryItems: [], currentPage: 1 }, () => {
-        this.fetchGalleryItems();
-      });
+      this.setState({ galleryItems: [], currentPage: 1 });
+    }
+
+    if (prevState.currentPage !== currentPage) {
+      this.fetchGalleryItems(queryName, currentPage);
     }
   }
 
-  fetchGalleryItems = () => {
-    const { queryName } = this.props;
-    const { currentPage } = this.state;
-
+  fetchGalleryItems = (queryName, currentPage) => {
     this.setState({ status: 'loading' }, () => {
       pixabayAPI
         .fetchImages(queryName, currentPage)
@@ -38,13 +38,18 @@ export default class ImageGallery extends Component {
           this.setState(prevState => ({
             galleryItems: [...prevState.galleryItems, ...res.data.hits],
             status: 'resolved',
-            currentPage: prevState.currentPage + 1,
           }));
         })
         .catch(error => {
           this.setState({ status: 'rejected', error });
         });
     });
+  };
+
+  onLoadMore = () => {
+    this.setState(prevState => ({
+      currentPage: prevState.currentPage + 1,
+    }));
   };
 
   toggleModal = (url = '') => {
@@ -123,7 +128,7 @@ export default class ImageGallery extends Component {
               );
             })}
           </ul>
-          <button className={s.Button} onClick={this.fetchGalleryItems}>
+          <button className={s.Button} onClick={this.onLoadMore}>
             <AiFillCaretDown />
             Load more...
           </button>

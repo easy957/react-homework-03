@@ -13,8 +13,7 @@ export class App extends Component {
     currentPage: 0,
     status: 'idle',
     error: null,
-    showModal: false,
-    modalImgUrl: '',
+    modalImgUrl: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -56,9 +55,8 @@ export class App extends Component {
     }));
   };
 
-  toggleModal = (url = '') => {
+  toggleModal = (url = null) => {
     this.setState(prevState => ({
-      showModal: !prevState.showModal,
       modalImgUrl: url,
     }));
   };
@@ -68,7 +66,7 @@ export class App extends Component {
   };
 
   render() {
-    const { status, showModal, modalImgUrl, galleryItems, error } = this.state;
+    const { status, modalImgUrl, galleryItems, error } = this.state;
 
     return (
       <>
@@ -80,7 +78,7 @@ export class App extends Component {
           error={error}
           onLoadMore={this.onLoadMore}
         />
-        {showModal && (
+        {modalImgUrl && (
           <Modal onClose={this.toggleModal}>
             <img src={modalImgUrl} alt="Original size" />
           </Modal>

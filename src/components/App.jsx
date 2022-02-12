@@ -19,6 +19,7 @@ export function App() {
   useEffect(() => {
     function fetchGalleryItems() {
       setStatus(currentPage === 1 ? 'loading' : 'loading-more');
+
       pixabayAPI
         .fetchImages(queryName, currentPage)
         .then(res => {
@@ -26,8 +27,8 @@ export function App() {
           setStatus('resolved');
         })
         .catch(error => {
-          setStatus('rejected');
           setError(error);
+          setStatus('rejected');
         });
     }
 

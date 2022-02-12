@@ -88,7 +88,11 @@ export function App() {
       {/* Modal */}
       {modalImgUrl && (
         <Modal onClose={toggleModal}>
-          <img src={modalImgUrl} alt="Original size" />
+          <img
+            src={modalImgUrl}
+            alt="Original size"
+            style={{ maxHeight: '90vh' }}
+          />
         </Modal>
       )}
     </>

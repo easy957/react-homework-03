@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 
-import { AiFillCaretDown } from 'react-icons/ai';
-import { Oval } from 'react-loader-spinner';
-
 import pixabayAPI from '../services/pixabay-api';
 
 import Modal from './Modal';
 import ImageGallery from './ImageGallery';
 import Searchbar from './Searchbar';
+import LoadMoreBtn from './LoadMoreBtn';
+import Loader from './Loader';
 
 export function App() {
   const [queryName, setQueryName] = useState('');
@@ -62,25 +61,10 @@ export function App() {
       )}
 
       {/* Load More Button */}
-      {status === 'resolved' && (
-        <button className="Button" onClick={onLoadMore}>
-          <AiFillCaretDown />
-          Load more...
-        </button>
-      )}
+      {status === 'resolved' && <LoadMoreBtn onClick={onLoadMore} />}
 
       {/* Loading Indicator */}
-      {(status === 'loading-more' || status === 'loading') && (
-        <Oval
-          ariaLabel="loading-indicator"
-          height={80}
-          width={80}
-          strokeWidth={5}
-          color="#303f9f"
-          secondaryColor="cornflowerblue"
-          wrapperClass="Loader"
-        />
-      )}
+      {(status === 'loading-more' || status === 'loading') && <Loader />}
 
       {/* Error Message */}
       {status === 'rejected' && <h2>{error.message}</h2>}

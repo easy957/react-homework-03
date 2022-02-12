@@ -1,5 +1,8 @@
 import { Component } from 'react';
 
+import { AiFillCaretDown } from 'react-icons/ai';
+import { Oval } from 'react-loader-spinner';
+
 import pixabayAPI from '../services/pixabay-api';
 
 import Modal from './Modal';
@@ -70,14 +73,42 @@ export class App extends Component {
 
     return (
       <>
+        {/* Search Bar */}
         <Searchbar onSearchSubmit={this.handleSearch} />
-        <ImageGallery
-          galleryItems={galleryItems}
-          onImageClick={this.toggleModal}
-          status={status}
-          error={error}
-          onLoadMore={this.onLoadMore}
-        />
+
+        {/* Image Gallery */}
+        {(status === 'resolved' || status === 'loading-more') && (
+          <ImageGallery
+            galleryItems={galleryItems}
+            onImageClick={this.toggleModal}
+          />
+        )}
+
+        {/* Load More Button */}
+        {status === 'resolved' && (
+          <button className="Button" onClick={this.onLoadMore}>
+            <AiFillCaretDown />
+            Load more...
+          </button>
+        )}
+
+        {/* Loading Indicator */}
+        {(status === 'loading-more' || status === 'loading') && (
+          <Oval
+            ariaLabel="loading-indicator"
+            height={80}
+            width={80}
+            strokeWidth={5}
+            color="#303f9f"
+            secondaryColor="cornflowerblue"
+            wrapperClass="Loader"
+          />
+        )}
+
+        {/* Error Message */}
+        {status === 'rejected' && <h2>{error.message}</h2>}
+
+        {/* Modal */}
         {modalImgUrl && (
           <Modal onClose={this.toggleModal}>
             <img src={modalImgUrl} alt="Original size" />

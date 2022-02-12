@@ -79,7 +79,7 @@ export default class ImageGallery extends Component {
       return <div></div>;
     }
 
-    if (status === 'loading' && galleryItems.length === 0) {
+    if (status === 'loading') {
       return (
         <Oval
           ariaLabel="loading-indicator"
@@ -94,7 +94,7 @@ export default class ImageGallery extends Component {
     }
 
     if (status === 'rejected') {
-      return <p>{error.message}</p>;
+      return <h2>{error.message}</h2>;
     }
 
     if (status === 'resolved' || status === 'loading-more') {

@@ -12,6 +12,7 @@ export default class ImageGallery extends Component {
     galleryItems: [],
     currentPage: 0,
     status: 'idle',
+    isLoadingMore: false,
     error: null,
     showModal: false,
     modalImgUrl: '',
@@ -31,24 +32,29 @@ export default class ImageGallery extends Component {
   }
 
   fetchGalleryItems = (queryName, currentPage) => {
-    this.setState({ status: 'loading' }, () => {
-      pixabayAPI
-        .fetchImages(queryName, currentPage)
-        .then(res => {
-          this.setState(prevState => ({
-            galleryItems: [...prevState.galleryItems, ...res.data.hits],
-            status: 'resolved',
-          }));
-        })
-        .catch(error => {
-          this.setState({ status: 'rejected', error });
-        });
-    });
+    this.setState(
+      { status: currentPage === 1 ? 'loading' : 'loading-more' },
+      () => {
+        pixabayAPI
+          .fetchImages(queryName, currentPage)
+          .then(res => {
+            this.setState(prevState => ({
+              galleryItems: [...prevState.galleryItems, ...res.data.hits],
+              status: 'resolved',
+              isLoadingMore: false,
+            }));
+          })
+          .catch(error => {
+            this.setState({ status: 'rejected', error });
+          });
+      }
+    );
   };
 
   onLoadMore = () => {
     this.setState(prevState => ({
       currentPage: prevState.currentPage + 1,
+      isLoadingMore: true,
     }));
   };
 
@@ -60,7 +66,14 @@ export default class ImageGallery extends Component {
   };
 
   render() {
-    const { galleryItems, status, error, showModal, modalImgUrl } = this.state;
+    const {
+      galleryItems,
+      status,
+      error,
+      showModal,
+      modalImgUrl,
+      isLoadingMore,
+    } = this.state;
 
     if (status === 'idle') {
       return <div></div>;
@@ -80,39 +93,11 @@ export default class ImageGallery extends Component {
       );
     }
 
-    if (status === 'loading' && galleryItems.length > 0) {
-      return (
-        <>
-          <ul className={s.ImageGallery}>
-            {galleryItems.map(item => {
-              return (
-                <ImageGalleryItem
-                  key={item.id}
-                  tags={item.tags}
-                  previewUrl={item.webformatURL}
-                  largeUrl={item.largeImageURL}
-                />
-              );
-            })}
-          </ul>
-          <Oval
-            ariaLabel="loading-indicator"
-            height={80}
-            width={80}
-            strokeWidth={5}
-            color="#303f9f"
-            secondaryColor="cornflowerblue"
-            wrapperClass={s.Loader}
-          />
-        </>
-      );
-    }
-
     if (status === 'rejected') {
       return <p>{error.message}</p>;
     }
 
-    if (status === 'resolved') {
+    if (status === 'resolved' || status === 'loading-more') {
       return (
         <>
           <ul className={s.ImageGallery}>
@@ -128,10 +113,26 @@ export default class ImageGallery extends Component {
               );
             })}
           </ul>
-          <button className={s.Button} onClick={this.onLoadMore}>
-            <AiFillCaretDown />
-            Load more...
-          </button>
+
+          {!isLoadingMore && (
+            <button className={s.Button} onClick={this.onLoadMore}>
+              <AiFillCaretDown />
+              Load more...
+            </button>
+          )}
+
+          {isLoadingMore && (
+            <Oval
+              ariaLabel="loading-indicator"
+              height={80}
+              width={80}
+              strokeWidth={5}
+              color="#303f9f"
+              secondaryColor="cornflowerblue"
+              wrapperClass={s.Loader}
+            />
+          )}
+
           {showModal && (
             <Modal onClose={this.toggleModal}>
               <img src={modalImgUrl} alt="Original size" />

@@ -17,7 +17,7 @@ export function App() {
   const [modalImgUrl, setModalImgUrl] = useState(null);
 
   useEffect(() => {
-    function fetchGalleryItems() {
+    if (queryName !== '' && currentPage !== 0) {
       setStatus(currentPage === 1 ? 'loading' : 'loading-more');
 
       pixabayAPI
@@ -30,10 +30,6 @@ export function App() {
           setError(error);
           setStatus('rejected');
         });
-    }
-
-    if (queryName !== '' && currentPage !== 0) {
-      fetchGalleryItems();
     }
   }, [currentPage, queryName]);
 
